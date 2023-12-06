@@ -57,7 +57,7 @@ dashboardPage(
                               tags$br(),
                               tags$a("Différentes sources d'énergie"), align = "center"),
                        column(width = 4, tags$br(),
-                              tags$p("Cette base de données contient les valeurs du prix de l'électricité et du gaz en €/MWh en France et dans l'UE entre 1995 et 2021, elle suit une évolution biannuel (2 fois par an).
+                              tags$p("Cette base de données issue de data.gouv.fr contient les valeurs du prix de l'électricité et du gaz en €/MWh en France et dans l'UE entre 1995 et 2021, elle suit une évolution biannuel (2 fois par an).
   A noter que le gaz est moins efficient en terme énergétique que l'électricité, il est donc normal que son prix au MWh soit largement plus faible.
 Nous allons représenter ces données via différentes méthodes de visualisation afin d'avoir une représentation concrète de ces évolutions.
 Dans un second temps, nous représenterons la valeur du prix du gaz en €/MWh entre 2011 et 2022 dans les pays de l'UE sur une carte de l'Europe, ainsi, il sera possible de vérifier s'il y a une conséquence géographique sur le prix du gaz dans l'UE."))
