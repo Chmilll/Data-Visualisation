@@ -9,6 +9,60 @@ library(leaflet.extras)
 library(DT)
 library(tidyr)
 library(jpeg)
+
+#######################################################################################################
+###########################                      Phase 1                      ##############################        
+
+##########################   Importation, analyse et modication des données   ########################################### 
+####################################################################################################### 
+
+
+
+#########################  Importation, analyse et modication de la donnée "data"  ################################### 
+
+
+data <- read_excel("XL DATA VIS.xlsx", sheet = 1)
+datatable(data)
+
+names(data) <- c("année", "semestre", "gaz naturel en UE", "gaz naturel en France", "électricité en UE", "électricité en France")
+
+c1 = data %>% 
+  select(-année) %>% 
+  select(-semestre) %>%
+  names()
+
+
+#########################  Importation, analyse et modication de la donnée "my_data"  ################################### 
+
+
+my_data = read_excel("Donnée de gaz par pays.xlsx", sheet = 3)
+my_data$states <- c("Belgium", "Bulgaria", "Czech Republic", "Denmark", "Germany", "Estonia", "Ireland", "Spain", "France", "Croatia", "Italy", "Latvia", "Lithuania", "Luxembourg", "Hungary", "Netherlands", "Austria", "Poland", "Portugal", "Romania", "Slovenia", "Slovakia", "Sweden", "Bosnia and Herzegovina", "Turkey")
+
+states_map <- map_data("world",c("Belgium", "Bulgaria", "Czech Republic", "Denmark", "Germany", "Estonia", "Ireland", "Spain", "France", "Croatia", "Italy", "Latvia", "Lithuania", "Luxembourg", "Hungary", "Netherlands", "Austria", "Poland", "Portugal", "Romania", "Slovenia", "Slovakia", "Sweden", "Bosnia and Herzegovina", "Turkey")
+)
+
+latitude <- c(50.8503, 42.7339, 49.8175, 56.2639, 51.1657, 58.5953, 53.4129, 40.4637, 46.6031, 45.1000, 41.8719, 56.8796, 55.1694, 49.8153, 47.1625, 52.1326, 47.5162, 51.9194, 39.3999, 45.9432, 46.1512, 48.6690, 60.1282, 43.9159, 38.9637)
+longitudes <- c(4.3517, 25.4858, 15.4720, 9.5018, 10.4515, 25.0136, -8.2439, -3.7492, 2.3522, 15.2000, 12.5674, 24.1052, 23.8813, 6.1296, 19.5033, 5.2913, 14.5501, 19.1451, -8.2245, 24.9668, 14.9955, 19.0402, 18.6435, 17.6791, 35.2433)
+my_data$latitude <- latitude
+my_data$longitude <-longitudes
+
+c2 = my_data %>%
+  select(-states)%>%
+  names()
+
+
+################################        Importation d'une Photo       ################################### 
+
+
+
+#######################################################################################################
+################################                Phase 2               ###########################################        
+                                     
+################################    codage de l'apllication R shiny   ########################################### 
+####################################################################################################### 
+
+
+
 dashboardPage(
   
   dashboardHeader(title = "Evolution du prix domestique de gaz naturel et d'électricité",
@@ -48,7 +102,7 @@ dashboardPage(
   
   dashboardBody(
     tabItems(
-      #1
+      ## Menu 1 : Donnée
       tabItem(tabName = "data",
               tabBox(id="t1", width = 12,
                      tabPanel("A propos de", icon = icon("address-card"),
@@ -57,11 +111,10 @@ dashboardPage(
                               tags$br(),
                               tags$a("Différentes sources d'énergie"), align = "center"),
                        column(width = 4, tags$br(),
-                              tags$p("Cette base de données issue de data.gouv.fr contient les valeurs du prix de l'électricité et du gaz en €/MWh en France et dans l'UE entre 1995 et 2021, elle suit une évolution biannuel (2 fois par an).
+                              tags$p("Cette base de données contient les valeurs du prix de l'électricité et du gaz en €/MWh en France et dans l'UE entre 1995 et 2021, elle suit une évolution biannuel (2 fois par an).
   A noter que le gaz est moins efficient en terme énergétique que l'électricité, il est donc normal que son prix au MWh soit largement plus faible.
 Nous allons représenter ces données via différentes méthodes de visualisation afin d'avoir une représentation concrète de ces évolutions.
-Dans un second temps, nous représenterons la valeur du prix du gaz en €/MWh entre 2011 et 2022 dans les pays de l'UE sur une carte de l'Europe, ainsi, il sera possible de vérifier s'il y a une réalité géographique sur le prix du gaz dans l'UE,
-                              est-il plus élevé dans une certaine zone ou est-ce disparate. A noter, qu'il y a eu un changement sur le document orginal afin de présenter les plus parlantes."))
+Dans un second temps, nous représenterons la valeur du prix du gaz en €/MWh entre 2011 et 2022 dans les pays de l'UE sur une carte de l'Europe, ainsi, il sera possible de vérifier s'il y a une conséquence géographique sur le prix du gaz dans l'UE."))
                      )
                               ),
                      tabPanel("Donnée",DTOutput("dataT"),icon = icon("address-card")),
@@ -69,7 +122,7 @@ Dans un second temps, nous représenterons la valeur du prix du gaz en €/MWh e
                      tabPanel("Summary stats", icon = icon("address-card"),verbatimTextOutput("summary")),
                      )),
       
-      #2
+      ## Menu 2 : Visualisation
       tabItem(tabName = "viz",
               tabBox(id= "t2", width=12,
                     tabPanel(title = "Energie domestique par année", value = "trends", icon = icon("chart-simple"),
@@ -97,6 +150,7 @@ Dans un second temps, nous représenterons la valeur du prix du gaz en €/MWh e
                              radioButtons(inputId = "fit", label = "selection de la smooth method", choices = c("loess","lm"), selected = "lm", inline = TRUE),
                              withSpinner(plotlyOutput("scatter")))
                     )),
+     ## Menu 3 : Map
       tabItem(tabName = "map",
               tabBox(id= "t5", width=12,
               tabPanel( title = "Carte du prix du gaz : Recherche par classe ", value = "cc", icon = icon("earth-europe"),

@@ -14,6 +14,10 @@ library(readxl)
 library(tidyr)
 library(DT)
 
+###################################    Initialisation de la phase 1 du code   ################################################################
+#########################################################################################################
+
+
 data <- read_excel("XL DATA VIS.xlsx")
 
 datatable(data)
@@ -30,10 +34,11 @@ longitudes <- c(4.3517, 25.4858, 15.4720, 9.5018, 10.4515, 25.0136, -8.2439, -3.
 my_data$latitude <- latitude
 my_data$longitude <-longitudes
 
-c1 = data %>% 
-  select(-année) %>% 
-  select(-semestre) %>%
-  names()
+
+#############################     Fin de la phase 1          #########################################
+#######################################################################################################
+
+
 
 function(input, output, session) {
 
